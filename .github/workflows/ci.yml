@@ -1,0 +1,63 @@
+name: MERN CI Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Trigger CI on push to main branch
+  pull_request:
+    branches:
+      - main  # Trigger CI on pull requests to main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'  # Use the version you are using
+
+      # Step 3: Install dependencies for both server (Node.js) and client (React)
+      - name: Install dependencies (Server)
+        run: |
+          npm install
+
+      - name: Install dependencies (Client)
+        run: |
+          cd client  # Assuming your frontend code is inside the "client" folder
+          npm install
+
+      # Step 4: Run tests for both server and client
+      - name: Run tests (Server)
+        run: |
+          npm test -- --coverage  # Adjust your test command as needed
+
+      - name: Run tests (Client)
+        run: |
+          cd client
+          npm test -- --coverage  # Adjust your test command as needed
+
+      # Step 5: Lint the code to ensure quality
+      - name: Lint code (Server)
+        run: |
+          npm run lint  # Adjust based on your lint script setup
+
+      - name: Lint code (Client)
+        run: |
+          cd client
+          npm run lint  # Adjust based on your lint script setup
+
+      # Step 6: Build the project (optional)
+      - name: Build Client (React app)
+        run: |
+          cd client
+          npm run build
+
+      - name: Build Server (Node app)
+        run: |
+          npm run build
